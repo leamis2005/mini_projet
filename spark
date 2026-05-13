@@ -1,0 +1,58 @@
+#!/usr/bin/env php
+<?php
+
+use CodeIgniter\Boot;
+use Config\Paths;
+
+/*
+ *--------------------------------------------------------------------
+ * CHECK PHP VERSION
+ *--------------------------------------------------------------------
+ */
+
+$minPhpVersion = '8.2'; // If you update this, don't forget to update `public/index.php`.
+if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
+    $message = sprintf(
+        'Your PHP version must be %s or higher to run CodeIgniter. Current version: %s',
+        $minPhpVersion,
+        PHP_VERSION,
+    );
+
+    fwrite(STDERR, $message . PHP_EOL);
+    exit(1);
+}
+
+/*
+ *--------------------------------------------------------------------
+ * SET THE CURRENT DIRECTORY
+ *--------------------------------------------------------------------
+ */
+
+$rootPath = __DIR__ . DIRECTORY_SEPARATOR;
+$publicPath = $rootPath . 'public' . DIRECTORY_SEPARATOR;
+
+if (! defined('PUBLICPATH')) {
+    define('PUBLICPATH', $publicPath);
+}
+if (! defined('FCPATH')) {
+    define('FCPATH', PUBLICPATH);
+}
+
+// Ensure the current directory is pointing to the project's root
+if (getcwd() . DIRECTORY_SEPARATOR !== $rootPath) {
+    chdir($rootPath);
+}
+
+/*
+ *--------------------------------------------------------------------
+ * BOOTSTRAP THE APPLICATION
+ *--------------------------------------------------------------------
+ */
+
+require $rootPath . 'app/Config/Paths.php';
+
+$paths = new Paths();
+
+require $paths->systemDirectory . '/Boot.php';
+
+exit(Boot::bootSpark($paths));
